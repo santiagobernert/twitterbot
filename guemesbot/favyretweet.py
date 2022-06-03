@@ -14,7 +14,8 @@ def retweet(api,tweet):
         return
     if not tweet.retweeted:
         try:
-            tweet.retweet()
+            api.retweet(tweet)
+            print('retweet a ', tweet.text)
         except Exception as e:
             logger.error("Error on retweet", exc_info=True)
 
@@ -23,14 +24,16 @@ def fav(api, tweet):
         return
     if not tweet.favorited:
         try:
-            tweet.favorite()
+            api.like(tweet)
+            print('like a ', tweet.text)
         except Exception as e:
             logger.error("Error on fav", exc_info=True)
 
 def responder(api, tweet, id_str):
     if tweet.user.id != USERID:
             try:
-                api.update_status(f'Gracias por responder {tweet.user.name}', in_reply_to_status_id=id_str)
+                api.create_tweet(text=f'Gracias por responder {tweet.user.name}', in_reply_to_tweet_id=id_str)
+                print('rspondido a ', tweet.user.name)
             except Exception as e:
                 logger.error("Error al responder", exc_info=True)
 
@@ -38,7 +41,8 @@ def seguir(api, tweet):
     if tweet.user.id != USERID:
         if not tweet.user.following:
             try:
-                api.create_friendship(user_id=tweet.user.id)
+                api.follow_user(user_id=tweet.user.id)
+                print('siguiendo a ', tweet.user.name)
             except Exception as e:
                     logger.error("Error al seguir", exc_info=True)
 
