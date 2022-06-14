@@ -10,7 +10,7 @@ logger = logging.getLogger()
 
 
 def retweet(api,tweet):
-    if tweet.user.id == USERID:
+    if str(tweet.author_id) == USERID:
         return
     if not tweet.retweeted:
         try:
@@ -20,7 +20,7 @@ def retweet(api,tweet):
             logger.error("Error on retweet", exc_info=True)
 
 def fav(api, tweet):
-    if tweet.user.id == USERID:
+    if str(tweet.author_id) == USERID:
         return
     if not tweet.favorited:
         try:
@@ -30,7 +30,7 @@ def fav(api, tweet):
             logger.error("Error on fav", exc_info=True)
 
 def responder(api, tweet, id_str):
-    if tweet.user.id != USERID:
+    if str(tweet.author_id) != USERID:
             try:
                 api.create_tweet(text=f'Gracias por responder {tweet.user.name}', in_reply_to_tweet_id=id_str)
                 print('rspondido a ', tweet.user.name)
@@ -38,7 +38,7 @@ def responder(api, tweet, id_str):
                 logger.error("Error al responder", exc_info=True)
 
 def seguir(api, tweet):
-    if tweet.user.id != USERID:
+    if str(tweet.author_id) != USERID:
         if not tweet.user.following:
             try:
                 api.follow_user(user_id=tweet.user.id)
@@ -53,11 +53,11 @@ def on_error(self, status):
 def interactuar(api):
     mentions = api.get_users_mentions(USERID)
     for mention in mentions.data:
-        mention_id = mention.id
-        retweet(api, mention_id)
-        fav(api, mention_id)
-        responder(api, mention_id, mention.id_str)
-        seguir(api, mention_id)
+        print(mention.text)
+        retweet(api, mention)
+        fav(api, mention)
+        responder(api, mention, mention.id_str)
+        seguir(api, mention)
 
 if __name__ == "__main__":
     interactuar()
