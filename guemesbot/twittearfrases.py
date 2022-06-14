@@ -5,7 +5,10 @@ import random
 
 def twittear_frase(api):
     frase = random.choice(FRASES)
-    api.create_tweet(text=frase)
+    try:
+        api.create_tweet(text=frase)
+    except:
+        api.create_tweet(text=random.choice(FRASES))
     return frase
 
 
@@ -35,7 +38,7 @@ def twittear(api):
     else:
         print('no hay favs nuevos')
     with open('favs.txt', 'w') as wf:
-        wf.write(str(favs_nuevos))
+        wf.write(f'{favs_nuevos}\n {favs_nuevos}\n {favs_nuevos}\n {favs_nuevos}\n ')
         wf.close()
 
     for follower in api.get_users_followers(id=USERID).data:
@@ -43,7 +46,8 @@ def twittear(api):
             print('Soldado viejo')
         else:
             api.create_tweet(text=f'Nuevo soldado! @{follower.username}')
-            with open('seguidores.txt', 'r') as ws:
-                ws.write(seguidores)
+            with open('seguidores.txt', 'w') as ws:
+                for i in seguidores:
+                    ws.write(i)
                 ws.close()
 
