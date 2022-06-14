@@ -25,29 +25,30 @@ def nuevo_sold(api):
         api.create_tweet(text=f'Nuevo soldado! @{follower.username}')
 
 
-with open('C:/Users/ETEC/Documents/gringo/twitterbot/guemesbot/favs.txt', 'r') as r:
-    favs = int(r.readline())
-    r.close()
-seguidores = ['Mauro017975703']
+
 
 def twittear(api):
-    global favs, seguidores
+    with open('guemesbot/favs.txt', 'r') as rf:
+        favs = int(rf.readline())
+        rf.close()
+    with open('guemesbot/seguidores.txt', 'r') as rs:
+        seguidores = [str(seg) for seg in rs]
+        rs.close()
     favs_nuevos = 0
     for tweet in api.get_users_tweets(id=USERID).data:
         print(tweet.text)
         if api.get_liking_users(tweet.id).data:
             favs_nuevos += len(api.get_liking_users(tweet.id).data)
-            if favs_nuevos > favs:
-                tw = twittear_frase(api)
-                print(f'        {tw.upper()}')
-                with open('favs.txt', 'w') as w:
-                    w.write(str(favs+favs_nuevos))
-                    w.close()
-                break
-            else:
-                print("este tuit no tiene favs nuevos")
+        else:
+            print("este tuit no tiene favs nuevos")
+    if favs_nuevos > favs:
+        tw = twittear_frase(api)
+        print(f'        {tw.upper()}')
     else:
         print('no hay favs nuevos')
+    with open('guemesbot/favs.txt', 'w') as wf:
+        wf.write(str(favs_nuevos))
+        wf.close()
 
     for follower in api.get_users_followers(id=USERID).data:
         if str(follower.username) in seguidores:
@@ -55,7 +56,9 @@ def twittear(api):
         else:
             logger.info(f"Nuevo soldado {follower.name}")
             api.create_tweet(text=f'Nuevo soldado! @{follower.username}')
-            seguidores.append(str(follower.username))
+            with open('guemesbot/seguidores.txt', 'r') as ws:
+                ws.write(seguidores)
+                ws.close()
 
-if __name__ == "__main__":
-    twittear_frase(client)
+#if __name__ == "__main__":
+#    twittear_frase(client)
