@@ -1,7 +1,6 @@
 from config import client
 from favyretweet import interactuar
 from twittearfrases import twittear
-from follow import seguir
 
 
 
