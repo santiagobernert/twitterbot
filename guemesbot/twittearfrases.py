@@ -19,6 +19,8 @@ def twittear(api):
         rf.close()
     with open('seguidores.txt', 'r') as rs:
         seguidores = [str(seg) for seg in rs]
+        seguidores = seguidores[:-1]
+        seguidores[-1].replace('\n', '')
         rs.close()
     with open('tweets.txt', 'r') as rt:
         tweets_viejos = [str(tw) for tw in rt]
@@ -54,15 +56,15 @@ def twittear(api):
         if str(follower.username) not in seguidores:
             try:
                 api.create_tweet(text=f'Nuevo soldado! @{follower.username}')
+                with open('seguidores.txt', 'w') as ws:
+                    seguidores.append(follower.username)
+                    seguidores_nuevos = list(dict.fromkeys(seguidores))
+                    for i in seguidores_nuevos:
+                        ws.write(i)
+                        ws.write('\n')
+                    ws.close()
             except:
                 print("error: tweet repetido")
-            with open('seguidores.txt', 'w') as ws:
-                seguidores.append(follower.username)
-                seguidores_nuevos = list(dict.fromkeys(seguidores))
-                for i in seguidores_nuevos:
-                    ws.write(i)
-                    ws.write('\n')
-                ws.close()
         else:
             return
 
